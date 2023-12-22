@@ -15,7 +15,9 @@ const updateVersionInFiles = (incrementType) => {
         'icon1024.png',
         'index.js',
         'styles.css',
-        'manifest.json'
+        'manifest.json',
+        'background.js',
+        'styles.css'
     ];
     let manifest = JSON.parse(fs.readFileSync('manifest.json'));
     let version = semver.parse(manifest.version);
