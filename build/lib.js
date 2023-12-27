@@ -33,7 +33,8 @@ const updateVersionInFiles = (incrementType) => {
     fs.writeFileSync('package.json', JSON.stringify(package, null, 4));
     
     files.forEach(fileName => {
-        archive.file(fileName, fs.readFileSync(fileName) + '\n');
+
+        archive.file(fileName, fs.readFileSync(fileName));
     });
     
     const zipFilePath = 'better-github.zip';
