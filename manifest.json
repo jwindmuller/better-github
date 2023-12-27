@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Better GitHub",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "Tweaks for GitHub.com",
     "host_permissions": [
         "*://github.com/*"
