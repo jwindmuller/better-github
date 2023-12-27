@@ -17,7 +17,10 @@ const updateVersionInFiles = (incrementType) => {
         'styles.css',
         'manifest.json',
         'background.js',
-        'styles.css'
+        'styles.css',
+        'popup/popup.css',
+        'popup/popup.js',
+        'popup/popup.html',
     ];
     let manifest = JSON.parse(fs.readFileSync('manifest.json'));
     let version = semver.parse(manifest.version);

@@ -1,6 +1,6 @@
 {
     "name": "better-github",
-    "version": "0.0.7",
+    "version": "0.0.10",
     "description": "A series of tweaks to make it easier to use GitHub.",
     "main": "index.js",
     "repository": "git@github.com:jwindmuller/better-github.git",
