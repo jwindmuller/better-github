@@ -8,6 +8,47 @@ const path = require('path');
 const updateVersionInFiles = (incrementType) => {
     incrementType = incrementType || 'patch';
     
+    let manifest = JSON.parse(fs.readFileSync('manifest.json'));
+    let version = semver.parse(manifest.version);
+    
+    version = version.inc(incrementType).format();
+
+    // Update version in package.json
+    let package = JSON.parse(fs.readFileSync('package.json'));
+    package.version = version;
+    fs.writeFileSync('package.json', JSON.stringify(package, null, 4));
+
+    // Update version in manifest.json
+    manifest.version = version;
+    saveManifest(manifest);
+
+
+    const manifestWithUpdatedVersion = JSON.parse(fs.readFileSync('manifest.json'));
+
+    createZip(manifestWithUpdatedVersion, true);
+    createZip(manifest, false);
+    
+    return version;
+};
+
+const saveManifest = (manifest) => { 
+    fs.writeFileSync('manifest.json', JSON.stringify(manifest, null, 4) + '\n');
+}
+const createZip = (manifest, forChrome) => { 
+    // Make manifest compatible with each browser
+    if (forChrome) {
+        manifest.background = {
+            "service_worker": "background.js"
+        };
+    } else {
+        manifest.background = {
+            "scripts": [
+                "background.js"
+            ]
+        };
+    }
+    saveManifest(manifest);
+    
     const files = [
         'icon16.png',
         'icon48.png',
@@ -22,31 +63,18 @@ const updateVersionInFiles = (incrementType) => {
         'popup/popup.js',
         'popup/popup.html',
     ];
-    let manifest = JSON.parse(fs.readFileSync('manifest.json'));
-    let version = semver.parse(manifest.version);
-    version = version.inc(incrementType).format();
-    manifest.version = version;
-    fs.writeFileSync('manifest.json', JSON.stringify(manifest, null, 4) + '\n');
-    
-    let package = JSON.parse(fs.readFileSync('package.json'));
-    package.version = version;
-    fs.writeFileSync('package.json', JSON.stringify(package, null, 4));
-    
     files.forEach(fileName => {
-
         archive.file(fileName, fs.readFileSync(fileName));
     });
-    
-    const zipFilePath = 'better-github.zip';
+
+    const zipFilePath = `better-github-for-${forChrome ? 'chrome' : 'firefox'}.zip`;
     fs.writeFileSync(
         `../${zipFilePath}`,
         archive.generate({ base64: false, compression: 'DEFLATE' }),
         'binary'
     );
     console.log(`Generated ${zipFilePath} in ${path.resolve(process.cwd(), '..')}`);
-
-    return version;
-};
+}
 
 const doGit = async (version) => {
     const git = simpleGit();
