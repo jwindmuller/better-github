@@ -8,7 +8,8 @@
     "license": "MIT",
     "private": false,
     "scripts": {
-        "build": "node build/index.js"
+        "build": "node build/index.js",
+        "build:nogit": "node build/index.js dry"
     },
     "dependencies": {
         "node-zip": "^1.1.1",
