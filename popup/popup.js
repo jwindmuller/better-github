@@ -1,6 +1,7 @@
 (async () => {
+    const client=  chrome ? chrome :  browser;
     const list = document.getElementById('popup-list')
-    const tabs = await browser.tabs.query({ 
+    const tabs = await client.tabs.query({
         active: true, 
         currentWindow: true 
     });
@@ -21,12 +22,15 @@
 
     const handleClick = async (event) => {
         const button = event.target;
-        await browser.tabs.sendMessage(tabs[0].id, button.innerText);
+        await client.tabs.sendMessage(tabs[0].id, button.innerText);
     }
     
-    const commands = await this.browser.commands.getAll();
+    const commands = await client.commands.getAll();
 
     commands.forEach((command) => { 
+        if (command.name[0] === '_') {
+            return;
+        }
         const description = command.description;
         const path = description.split('#path:')[1]?.trim();
         let disabled = false;

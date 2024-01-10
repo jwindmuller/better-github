@@ -74,10 +74,10 @@ const expandLoadMore = (onComplete) => {
     });
 }
 
-
+const client =  chrome ? chrome : browser;
 (() => {
     console.log('BGH');
-    browser.runtime.onMessage.addListener((command) => {
+    client.runtime.onMessage.addListener((command) => {
         if (command === 'Expand All Hidden Items') {
             expandLoadMore();
             return;
