@@ -51,17 +51,29 @@ const hideCommitEntries = async (parentContainer) => {
     document.querySelector('.gh-header-title').scrollIntoView({behavior:'smooth', block: 'center', inline: 'center'});
 };
 
+const getBlanket = () => { 
+    let blanket = document.querySelector('.better-gh-loading');
+    if (blanket ){
+        return blanket;
+    }
+    blanket  = document.createElement('div');
+    blanket.className = 'better-gh-loading';
+    blanket.innerHTML = '<span class="text">Loading...</span>';
+
+    document.body.append(blanket);
+    return blanket;
+}
 const expandLoadMore = (onComplete) => {
+    
+    getBlanket().classList.add('shown');
     const loadMoreButton = document.querySelector('.ajax-pagination-btn');
     if (!loadMoreButton) {
+        getBlanket().classList.remove('shown');
         if (onComplete) {
             onComplete();
-        } else {
-            alert('Nothing more to expand');
         }
         return;
     }
-
 
     const container = loadMoreButton.closest('#js-progressive-timeline-item-container');
     debug('START LOADING', container);
@@ -74,6 +86,30 @@ const expandLoadMore = (onComplete) => {
     });
 }
 
+let nextTestingNotes = 0;
+const findTestingNotes = () => {
+    const comments = Array.from(document.querySelectorAll('.TimelineItem.js-comment-container task-lists'));
+    const found = comments.reduce((testingNotesList, comment, currentIndex) => { 
+        const isTestingNotes = comment.innerText.toLowerCase().trim().indexOf('testing') === 0;
+        console.log({isTestingNotes})
+        if (isTestingNotes) {
+            testingNotesList.push(currentIndex);
+        }
+        return testingNotesList;
+    }, []);
+
+    if (found.length === 0) {
+        alert('No testing notes found (comments beginning with "testing")!');
+        window.scrollTo({top: document.body.scrollHeight, left: 0 });
+        return;
+    }
+    comments[found[nextTestingNotes]].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
+    nextTestingNotes++;
+    if (nextTestingNotes >= found.length) {
+        nextTestingNotes = 0;
+    }
+};
+
 const client =  chrome ? chrome : browser;
 (() => {
     console.log('BGH');
@@ -84,6 +120,10 @@ const client =  chrome ? chrome : browser;
         }
         if (command === 'Hide All Commits From Issue') {
             expandLoadMore(hideCommitEntries);
+            return;
+        }
+        if (command === 'Find Testing Notes') {
+            expandLoadMore(findTestingNotes);
             return;
         }
     });
