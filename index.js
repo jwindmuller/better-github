@@ -75,7 +75,10 @@ const expandLoadMore = (onComplete) => {
         return;
     }
 
-    const container = loadMoreButton.closest('#js-progressive-timeline-item-container');
+    let container = loadMoreButton.closest('#js-progressive-timeline-item-container');
+    if (container === null) {
+        container = loadMoreButton.closest('.TimelineItem-body');
+    }
     debug('START LOADING', container);
     loadMoreButton.scrollIntoView(false, { behavior: 'instant', block: 'center', inline: 'center' });
     window.scrollTo({ top: window.scrollY + 100, left: 0 });
