@@ -59,6 +59,10 @@
             ]
         }
     ],
+    "options_ui": {
+        "page": "options/options.html"
+    },
+    "permissions": ["storage"],
     "browser_specific_settings": {
         "gecko": {
             "id": "better-github@windmuller.ca"

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Options</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="options.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <script src="options.js"></script>
+    <h1>Search comments for:</h1>
+    <div class="SearchTerm--container"></div>
+    <div class="SearchTerm">
+      <label>
+        Show in menu as:
+        <input type="text" class="SearchTerm--label"
+        placeholder="Find ____" />
+      </label>
+      <label >
+        Search comments beginning with:
+        <input type="text" class="SearchTerm--value" />
+      </label>
+      <div>
+        <button>Delete</button>
+      </div>
+    </div>
+    <div>
+      <input type="button" value="Add search rule" class="SearchTerm--add-rule" />
+      <input type="button" value="Save" class="SearchTerm--save-rules" />
+    </div>
+  </body>
+</html>
