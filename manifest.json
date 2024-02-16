@@ -32,13 +32,6 @@
                 "mac": "Command+Shift+H"
             },
             "description": "Hide all commit items in issue history. #path:/issues/"
-        },
-        "Find Testing Notes": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+T",
-                "mac": "Command+Shift+T"
-            },
-            "description": "Expand all hidden items and find the testing notes."
         }
     },
     "background": {

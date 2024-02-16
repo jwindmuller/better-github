@@ -22,13 +22,33 @@
 
     const handleClick = async (event) => {
         const button = event.target;
-        await client.tabs.sendMessage(tabs[0].id, button.innerText);
+        const command = button.getAttribute('data-command');
+        const description = button.getAttribute('data-description');
+        await client.tabs.sendMessage(tabs[0].id, {
+            command,
+            description
+        });
     }
     
     const commands = await client.commands.getAll();
+    const data = await client.storage.local.get();
+
+    data.options.forEach(({label, value}) => {
+        commands.push({
+            type: 'customized',
+            name: 'Find',
+            label,
+            description: value
+        })
+    })
+    
 
     commands.forEach((command) => { 
         if (command.name[0] === '_') {
+            return;
+        }
+        const isCustomized = command.type === 'customized';
+        if (command.name === 'Find' && !isCustomized ) {
             return;
         }
         const description = command.description;
@@ -49,6 +69,10 @@
         item.appendChild(button);
         list.appendChild(item);
         button.innerText = command.name;
+        if (isCustomized) {
+            button.innerText = command.label;
+        }
+        button.setAttribute('data-description', command.description);
         button.setAttribute('data-command', command.name);
         button.addEventListener('click', handleClick);
     });

@@ -89,34 +89,47 @@ const expandLoadMore = (onComplete) => {
     });
 }
 
-let nextTestingNotes = 0;
-const findTestingNotes = () => {
-    const comments = Array.from(document.querySelectorAll('.TimelineItem.js-comment-container task-lists'));
-    const found = comments.reduce((testingNotesList, comment, currentIndex) => { 
-        const isTestingNotes = comment.innerText.toLowerCase().trim().indexOf('testing') === 0;
-        console.log({isTestingNotes})
-        if (isTestingNotes) {
-            testingNotesList.push(currentIndex);
-        }
-        return testingNotesList;
-    }, []);
+const findCommentsStartingWith = (text) => {
+    let nextCommentToFocus = 0;
+    return () => {
+        const searchTerm = text.toLowerCase();
+        const comments = Array.from(
+            document.querySelectorAll('.TimelineItem.js-comment-container task-lists')
+        );
+        const found = comments.reduce((commentsThatMatch, comment, currentIndex) => { 
+            const commentText = comment.innerText.toLowerCase().trim();
+            const isMatch = commentText.indexOf(searchTerm) === 0;
+            if (isMatch) {
+                commentsThatMatch.push(currentIndex);
+            }
+            
+            return commentsThatMatch;
+        }, []);
 
-    if (found.length === 0) {
-        alert('No testing notes found (comments beginning with "testing")!');
-        window.scrollTo({top: document.body.scrollHeight, left: 0 });
-        return;
-    }
-    comments[found[nextTestingNotes]].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
-    nextTestingNotes++;
-    if (nextTestingNotes >= found.length) {
-        nextTestingNotes = 0;
+        if (found.length === 0) {
+            alert(`No comments beginning with "${text}" found!`);
+            window.scrollTo({top: document.body.scrollHeight, left: 0 });
+            return;
+        }
+        
+        comments[found[nextCommentToFocus]].scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center', 
+            inline: 'start' 
+        });
+        
+        nextCommentToFocus++;
+        if (nextCommentToFocus >= found.length) {
+            nextCommentToFocus = 0;
+        }
     }
 };
 
 const client =  chrome ? chrome : browser;
+const findFunctions = {};
 (() => {
     console.log('BGH');
-    client.runtime.onMessage.addListener((command) => {
+    client.runtime.onMessage.addListener(({command, description}) => {
         if (command === 'Expand All Hidden Items') {
             expandLoadMore();
             return;
@@ -125,8 +138,11 @@ const client =  chrome ? chrome : browser;
             expandLoadMore(hideCommitEntries);
             return;
         }
-        if (command === 'Find Testing Notes') {
-            expandLoadMore(findTestingNotes);
+        if (command === 'Find') {
+            if (findFunctions[description] === undefined) {
+                findFunctions[description] = findCommentsStartingWith(description);
+            }
+            expandLoadMore(findFunctions[description]);
             return;
         }
     });
