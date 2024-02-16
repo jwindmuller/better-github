@@ -10,6 +10,9 @@
   <body>
     <script src="options.js"></script>
     <h1>Search comments for:</h1>
+    <div class="SearchTerm--buttons-top">
+      <input type="button" value="Add rule" class="SearchTerm--add-rule" />
+    </div>
     <div class="SearchTerm--container"></div>
     <div class="SearchTerm">
       <label>
@@ -18,16 +21,16 @@
         placeholder="Find ____" />
       </label>
       <label >
-        Search comments beginning with:
+        Match comments that begin with:
         <input type="text" class="SearchTerm--value" />
       </label>
-      <div>
-        <button>Delete</button>
+      <div class="SearchTerm--delete-container">
+        <button class="SearchTerm--delete">Delete</button>
       </div>
     </div>
-    <div>
-      <input type="button" value="Add search rule" class="SearchTerm--add-rule" />
+    <div class="SearchTerm--buttons">
       <input type="button" value="Save" class="SearchTerm--save-rules" />
+      <input type="button" value="Cancel" class="SearchTerm--cancel-edits" />
     </div>
   </body>
 </html>

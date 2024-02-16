@@ -1,5 +1,5 @@
 let configTemplate = null;
-
+let restoredSettings = null;
 /*
 On opening the options page, fetch stored settings and update the UI with them.
 */
@@ -12,7 +12,7 @@ async function init() {
     updateUI();
 }
 
-function updateUI(restoredSettings) {
+function updateUI() {
     if (configTemplate === null) {
         configTemplate = document.querySelector('.SearchTerm');
         document.body.removeChild(configTemplate);
@@ -28,24 +28,30 @@ function updateUI(restoredSettings) {
         const labelInput = copy.querySelector('.SearchTerm--label');
         labelInput.value = label;
         labelInput.addEventListener('keyup', function(event) {
-             updateRow(event, restoredSettings);
+             updateRow(event);
         });
         
         const valueInput = copy.querySelector('.SearchTerm--value');
         valueInput.value = value;
         valueInput.addEventListener('keyup', function(event) {
-            updateRow(event, restoredSettings);
-       });
+            updateRow(event);
+        });
+
+        const deleteButton =  copy.querySelector('.SearchTerm--delete');
+        deleteButton.addEventListener('click', function(event){
+            deleteRow(event);
+        });
         
         container.appendChild(copy);
     });
 
-    configureAddRuleButton(restoredSettings);
+    configureAddRuleButton();
 
-    configureSaveButton(restoredSettings);
+    configureSaveButton();
+    configureCancelButton();
 }
 
-function updateRow(event, restoredSettings) {
+function updateRow(event) {
     const input = event.target;
     const container = input.closest('.SearchTerm');
     const row = parseInt(container.getAttribute('data-row'), 10);
@@ -57,8 +63,17 @@ function updateRow(event, restoredSettings) {
         entry.value = input.value.trim();
     }
 }
+
+function deleteRow(event) {
+    const input = event.target;
+    const container = input.closest('.SearchTerm');
+    const row = parseInt(container.getAttribute('data-row'), 10);
+    restoredSettings.options.splice(row, 1);
+    updateUI(restoredSettings);
+}
+
 let addRuleButton = null;
-function configureAddRuleButton(restoredSettings) {
+function configureAddRuleButton() {
     if (addRuleButton !== null) {
         return;
     }
@@ -66,18 +81,28 @@ function configureAddRuleButton(restoredSettings) {
     addRuleButton = document.body.querySelector('.SearchTerm--add-rule');
     addRuleButton.addEventListener('click', function() {
         restoredSettings.options.push(makeOption());
-        updateUI(restoredSettings);
+        updateUI();
     });
 }
 
 let saveButton = null;
-function configureSaveButton(restoredSettings) {
+function configureSaveButton() {
     if (saveButton !== null) {
         return;
     }
     saveButton = document.body.querySelector('.SearchTerm--save-rules');
     saveButton.addEventListener('click', function() {
-        saveOptions(restoredSettings);
+        saveOptions();
+    })
+}
+let cancelButton = null;
+function configureCancelButton() {
+    if (cancelButton !== null) {
+        return;
+    }
+    cancelButton = document.body.querySelector('.SearchTerm--cancel-edits');
+    cancelButton.addEventListener('click', function() {
+        init();
     })
 }
 
@@ -88,7 +113,7 @@ function makeOption(label = '', value = '') {
     }
 }
 
-function saveOptions(restoredSettings) {
+function saveOptions() {
     const optionsToSave = restoredSettings.options.filter(function({label, value}) {
         return label !== '' || value !== '';
     })
@@ -100,9 +125,3 @@ function saveOptions(restoredSettings) {
 function onError(e) {
     console.error(e);
 }
-  
-/*
-On opening the options page, fetch stored settings and update the UI with them.
-*/
-const gettingStoredSettings = browser.storage.local.get();
-gettingStoredSettings.then(updateUI, onError);
