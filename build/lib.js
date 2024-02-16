@@ -62,6 +62,9 @@ const createZip = (manifest, forChrome) => {
         'popup/popup.css',
         'popup/popup.js',
         'popup/popup.html',
+        'options/options.html',
+        'options/options.css',
+        'options/options.js',
     ];
     files.forEach(fileName => {
         archive.file(fileName, fs.readFileSync(fileName));
