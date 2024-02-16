@@ -1,3 +1,4 @@
+const client =  chrome ? chrome :  browser;
 let configTemplate = null;
 let restoredSettings = null;
 /*
@@ -8,7 +9,7 @@ On opening the options page, fetch stored settings and update the UI with them.
 })();
 
 async function init() {
-    restoredSettings = await browser.storage.local.get();
+    restoredSettings = await client.storage.local.get();
     updateUI();
 }
 
@@ -117,7 +118,7 @@ function saveOptions() {
     const optionsToSave = restoredSettings.options.filter(function({label, value}) {
         return label !== '' || value !== '';
     })
-    browser.storage.local.set({
+    client.storage.local.set({
         options: optionsToSave
     });
 }
