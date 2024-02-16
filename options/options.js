@@ -1,25 +1,18 @@
 let configTemplate = null;
-function buildDefaultSettings(restoredSettings) {
-    if (restoredSettings.options !== undefined)  {
-        return restoredSettings;
-    }
-    return {
-        options : [
-            {
-                label: 'Find Testing Notes',
-                value: 'Testing'
-            },
-            {
-                label: 'Find Flaw Investigation',
-                value: 'Flaw Investigation'
-            },
-        ]
-    };
+
+/*
+On opening the options page, fetch stored settings and update the UI with them.
+*/
+(async() => {
+    init();
+})();
+
+async function init() {
+    restoredSettings = await browser.storage.local.get();
+    updateUI();
 }
 
 function updateUI(restoredSettings) {
-    restoredSettings = buildDefaultSettings(restoredSettings);
-    
     if (configTemplate === null) {
         configTemplate = document.querySelector('.SearchTerm');
         document.body.removeChild(configTemplate);

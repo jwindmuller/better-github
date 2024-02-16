@@ -32,8 +32,8 @@
     
     const commands = await client.commands.getAll();
     const data = await client.storage.local.get();
-
-    data.options.forEach(({label, value}) => {
+    const options = data.options ?? []
+    options.forEach(({label, value}) => {
         commands.push({
             type: 'customized',
             name: 'Find',
