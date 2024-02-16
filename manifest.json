@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Better GitHub",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "description": "Tweaks for GitHub.com",
     "host_permissions": [
         "*://github.com/*"
@@ -55,7 +55,9 @@
     "options_ui": {
         "page": "options/options.html"
     },
-    "permissions": ["storage"],
+    "permissions": [
+        "storage"
+    ],
     "browser_specific_settings": {
         "gecko": {
             "id": "better-github@windmuller.ca"
