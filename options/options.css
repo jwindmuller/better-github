@@ -1,5 +1,5 @@
 html, body {
-    width: 100vw;
+    width: 600px;
     height: 100vh;
     padding: 0;
     margin:0;
@@ -8,7 +8,7 @@ html, body {
     font-weight: 300;
 }
 body {
-    width: 100vw;
+    width: 600px;
     padding: 10px;
     box-sizing: border-box;
     overflow-x: hidden;
