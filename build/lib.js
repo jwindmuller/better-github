@@ -40,6 +40,7 @@ const createZip = (manifest, forChrome) => {
         manifest.background = {
             "service_worker": "background.js"
         };
+        delete manifest.browser_specific_settings;
     } else {
         manifest.background = {
             "scripts": [
