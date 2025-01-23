@@ -28,15 +28,8 @@ const hideCommitEntries = async () => {
 };
 
 const getCommitHistoryEntriesContainers = () => {
-    let commitElementsToHide = Array.from(document.querySelectorAll('.TimelineItem [id^=ref-commit]'));
-    
-    if (commitElementsToHide.length > 0) {
-        return commitElementsToHide;
-    }
-    commitElementsToHide =Array.from(document.querySelectorAll('[data-hovercard-url*=commit]')) ;
+    let commitElementsToHide =Array.from(document.querySelectorAll('[data-hovercard-url*=commit]'));
     commitElementsToHide = commitElementsToHide.map(commit => commit.closest('[data-timeline-event-id]'));
-    commitElementsToHide = commitElementsToHide
-        .filter((timelineItemsContainer, index) => commitElementsToHide.indexOf(timelineItemsContainer) !== index);
     return commitElementsToHide;
 };
 
