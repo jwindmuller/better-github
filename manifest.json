@@ -45,6 +45,8 @@
                 "https://github.com/*"
             ],
             "js": [
+                "lib.js",
+                "pages/issues.js",
                 "index.js"
             ],
             "css": [
