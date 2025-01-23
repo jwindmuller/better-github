@@ -6,36 +6,6 @@ const debug = (...args) => {
 
     console.log(...args);
 }
-// observeDOM, from https://stackoverflow.com/a/14570614
-const observeDOM = (function () {
-    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-
-    return function (obj, callback) {
-        if (!obj || obj.nodeType !== 1) return;
-
-        // define a new observer
-        var mutationObserver = new MutationObserver((mutationList, observer) => {
-            callback(observer.disconnect.bind(observer));
-        })
-
-        // have the observer observe for changes in children
-        mutationObserver.observe(obj, { childList: true, subtree: true });
-        return mutationObserver;
-    }
-})();
-
-const debouncedActionOnDOMChange = (element, action) => {
-
-    let delay = 0;
-    observeDOM(element, (stopObserving) => {
-        clearTimeout(delay);
-        delay = setTimeout(() => {
-            stopObserving();
-            action();
-
-        }, 10);
-    })
-}
 
 // Extension code
 const hideCommitEntries = async () => {
@@ -82,52 +52,10 @@ const getBlanket = () => {
     document.body.append(blanket);
     return blanket;
 }
-const expandLoadMore = (onComplete) => {
-    
-    getBlanket().classList.add('shown');
-    const loadMoreButton = getLoadMoreButton();
-    if (!loadMoreButton) {
-        getBlanket().classList.remove('shown');
-        if (onComplete) {
-            onComplete();
-        }
-        return;
-    }
-
-    let containers = getMoreContentContainers(loadMoreButton);
-    debug({loadMoreButton,container: containers})
-    debug('START LOADING', containers);
-    loadMoreButton.scrollIntoView(false, { behavior: 'instant', block: 'center', inline: 'center' });
-    window.scrollTo({ top: window.scrollY + 100, left: 0 });
-    loadMoreButton.click();
-    for (const container of containers) {
-        debouncedActionOnDOMChange(container, () => {
-            expandLoadMore(onComplete)
-        });
-    }
-}
 
 const getLoadMoreButton = () => { 
     let button = document.querySelector('[data-testid="issue-timeline-load-more-load-top"]');
-    if (button) {
-        return button;
-    }
-    button = document.querySelector('.ajax-pagination-btn');
     return button;
-}
-
-const getMoreContentContainers = (button) => {
-    const isOldButton = button.classList.contains('ajax-pagination-btn');
-    if (isOldButton) {
-        let container = button.closest('#js-progressive-timeline-item-container');
-        if (container === null) {
-            container = button.closest('.TimelineItem-body');
-        }
-        return [container];
-    }
-    const eventContainers = document.querySelectorAll('[data-testid="issue-timeline-container"] [aria-label="Events"]');
-
-    return Array.from(eventContainers);
 }
 
 const findCommentsStartingWith = (text) => {
@@ -179,27 +107,70 @@ const getCommentElements = () => {
     return comments;
 }
 
+const watchBodyDomChanges = () => {
+    const watcher = new MutationObserver((mutationsList, observer) => {
+        if (!started) {
+            return;
+        }
+        const done = clickLoadMore();
+        if (done) {
+            observer.disconnect();
+        }
+    });
+    watcher.observe(document.body, { childList: true, subtree: true });
+}
+
 const client =  chrome ? chrome : browser;
 const findFunctions = {};
-(() => {
+let onCompleteLoading = null;
+let started = false;
+
+(function main() {
     console.log('BGH');
     client.runtime.onMessage.addListener(({command, description}) => {
-        if (command === 'Expand All Hidden Items') {
-            expandLoadMore();
-            return;
+        switch (command) {
+            case 'Expand All Hidden Items':
+                onCompleteLoading = null;
+                break;
+            case 'Hide All Commits From Issue':
+                onCompleteLoading = hideCommitEntries;
+                break;
+            case 'Find':
+                if (findFunctions[description] === undefined) {
+                    findFunctions[description] = findCommentsStartingWith(description);
+                }
+                onCompleteLoading = findFunctions[description];
+                break;
+            default:
+                return;
         }
-        if (command === 'Hide All Commits From Issue') {
-            expandLoadMore(hideCommitEntries);
-            return;
-        }
-        if (command === 'Find') {
-            if (findFunctions[description] === undefined) {
-                findFunctions[description] = findCommentsStartingWith(description);
-            }
-            expandLoadMore(findFunctions[description]);
-            return;
-        }
+
+        started = true;
+        watchBodyDomChanges();
+        clickLoadMore();
     });
 })();
 
+const clickLoadMore = () => {
+    const loadMoreButton = getLoadMoreButton();
+    if (!started) {
+        return;
+    }
+    
+    getBlanket().classList.add('shown');
+    
+    if (!loadMoreButton) {
+        getBlanket().classList.remove('shown');
+        if (onCompleteLoading) {
+            onCompleteLoading();
+        }
+        return true;
+    }
+    
+    if (loadMoreButton.getAttribute('aria-disabled' === 'true')) {
+        return;
+    }
 
+    loadMoreButton.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
+    loadMoreButton.click();
+}
