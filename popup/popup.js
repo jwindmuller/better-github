@@ -55,7 +55,8 @@
         const path = description.split('#path:')[1]?.trim();
         let disabled = false;
         if (path) {
-            const pathMatches= url.indexOf(path) !== -1;
+            const matcher = new RegExp(path);
+            const pathMatches = matcher.test(url);
             if (!pathMatches) {
                 disabled =true;
             }

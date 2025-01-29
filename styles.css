@@ -23,3 +23,31 @@
     flex: 1;
     text-align: center;
 }
+
+.better-gh-message {
+    display: none;
+}
+.better-gh-message.shown {
+    display: block;
+    position: fixed;
+    top: .6rem;
+    right: .6rem;
+    width: 400px;
+    max-width: 80vw;
+    border: #979797 1px solid;
+    background: #000;
+    font-family: monospace;
+    white-space: pre;
+    border-radius: .3rem;
+    padding: .3rem;
+}
+.better-gh-message-close {
+    float: right;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    cursor: pointer;
+    border: #979797 1px solid;
+    border-radius: .3rem;
+}

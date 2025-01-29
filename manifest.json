@@ -24,14 +24,17 @@
                 "default": "Ctrl+Shift+E",
                 "mac": "Command+Shift+E"
             },
-            "description": "Expand all hidden history items in issue."
+            "description": "Expand all hidden history items in issue. #path:^.*/issues/.*$"
         },
         "Hide All Commits From Issue": {
             "suggested_key": {
                 "default": "Ctrl+Shift+H",
                 "mac": "Command+Shift+H"
             },
-            "description": "Hide all commit items in issue history. #path:/issues/"
+            "description": "Hide all commit items in issue history. #path:^.*/issues/.*$"
+        },
+        "Generate List of Pending PRs": {
+            "description": "Generate a list of pending PRs ahead of this PR. #path:^.*/pull/\\d+/commits/?$"
         }
     },
     "background": {
@@ -47,6 +50,7 @@
             "js": [
                 "lib.js",
                 "pages/issues.js",
+                "pages/prs.js",
                 "index.js"
             ],
             "css": [

@@ -23,6 +23,7 @@ const IssuesPage = (() => {
                 default:
                     return;
             }
+            showBlanket();
             watchBodyDomChanges(this._clickLoadMore.bind(this));
             this._clickLoadMore();
         }
@@ -33,10 +34,10 @@ const IssuesPage = (() => {
             }
             const loadMoreButton = this._getLoadMoreButton();
             
-            getBlanket().classList.add('shown');
+            
             
             if (!loadMoreButton) {
-                getBlanket().classList.remove('shown');
+                hideBlanket();
                 if (this.onCompleteLoading) {
                     this.onCompleteLoading();
                 }
