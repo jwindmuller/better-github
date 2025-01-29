@@ -8,10 +8,14 @@ const watchBodyDomChanges = (onChange) => {
     watcher.observe(document.body, { childList: true, subtree: true });
 }
 
-const getOrMakeElement = (className, message) => {
+const getOrMakeElement = (className, message, tag) => {
+    if (tag === undefined) {
+        tag = 'div';
+    }
+    
     let element = document.querySelector(`.${className}`);
     if (!element) {
-        element = document.createElement('div');
+        element = document.createElement(tag);
         document.body.append(element);
     }
     if (message) {
@@ -32,13 +36,31 @@ const hideBlanket = () => {
     getBlanket().classList.remove('shown');
 }
 
-const showMessage = (message) => {
+const makeButton = (label, action) => {
+    const button = getOrMakeElement(`better-gh-custom-button-${label.toLowerCase()}`, label);
+    button.classList.add('better-gh-message-button');
+    button.addEventListener('click', action);
+    return button;
+}
+const showMessage = (message, buttonList) => {
     const messageContainer = getOrMakeElement('better-gh-message');
-    const close = getOrMakeElement('better-gh-message-close', 'X');
-    close.addEventListener('click', () => hideMessage());
+    const buttons = getOrMakeElement('better-gh-message-buttons');
+    
+    if (Array.isArray(buttonList)) {
+        buttonList.forEach(({label, action}) => {
+            const button = makeButton(label, action);
+            buttons.append(button);
+        });
+    }
+
+    const close = makeButton('Close', () => hideMessage());
     messageContainer.append(close);
 
-    const messageText = getOrMakeElement('better-gh-message-text', message);
+    buttons.append(close);
+    
+    messageContainer.append(buttons);
+    
+    const messageText = getOrMakeElement('better-gh-message-text', message, 'textarea');
     messageContainer.append(messageText);
 
     messageContainer.classList.add('shown');

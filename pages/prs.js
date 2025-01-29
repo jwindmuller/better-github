@@ -38,7 +38,14 @@ const PullRequestPage = (() => {
             console.log(message);
             hideBlanket();
 
-            showMessage(message);
+            showMessage(message, [
+                {
+                    label: 'Copy',
+                    action: () => {
+                        navigator.clipboard.writeText(message);
+                    }
+                }
+            ]);
         }
 
         _getSourceBranchFromPRPageDOM(dom) {
