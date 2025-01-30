@@ -57,6 +57,8 @@
     text-align: center;
     cursor: pointer;
     border: #979797 1px solid;
+    color:#979797;
+    background: #000;
     border-radius: .3rem;
     margin-left: .3rem;
 }
@@ -66,5 +68,25 @@
     min-height: 400px;
     width: 100%;
     min-width: 100%;
+    color:#979797;
+    background: #000;
     
+}
+
+@media (prefers-color-scheme: light) {
+    .better-gh-message.shown {
+        border: #000 1px solid;
+        background: #fcfcfc;
+        
+    }
+    .better-gh-message-button {
+        border: #000 1px solid;
+        background-color: #fcfcfc;
+        color:#000;
+    }
+    .better-gh-message-text {
+        border: #000 1px solid;
+        background-color: #fcfcfc;
+        color:#000;
+    }
 }
