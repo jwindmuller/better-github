@@ -131,7 +131,10 @@ const PullRequestPage = (() => {
 
                     return {number: pr.number, isOpen: prIsOpen, state: pr.state };
                 }, this));
-                prResponses = prResponses.filter(pr => pr !== null)
+                prResponses = prResponses.filter(pr => pr !== null);
+                if (prResponses.length === 0) {
+                    prResponses = [{number: '?', isOpen: true}];
+                }
 
                 return { issueNumber: issueId, prs: prResponses };
             }, this);
